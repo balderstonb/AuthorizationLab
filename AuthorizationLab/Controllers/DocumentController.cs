@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,10 +11,13 @@ namespace AuthorizationLab.Controllers
     public class DocumentController : Controller
     {
         IDocumentRepository _documentRepository;
+        IAuthorizationService _authorizationService;
 
-        public DocumentController(IDocumentRepository documentRepository)
+        public DocumentController(IDocumentRepository documentRepository,
+                                  IAuthorizationService authorizationService)
         {
             _documentRepository = documentRepository;
+            _authorizationService = authorizationService;
         }
 
         public IActionResult Index()
@@ -21,7 +25,8 @@ namespace AuthorizationLab.Controllers
             return View(_documentRepository.Get());
         }
 
-        public IActionResult Edit(int id)
+        [Authorize]
+        public async Task<IActionResult> Edit(int id)
         {
             var document = _documentRepository.Get(id);
 
@@ -30,7 +35,16 @@ namespace AuthorizationLab.Controllers
                 return new NotFoundResult();
             }
 
-            return View(document);
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, document, new EditRequirement());
+            if (authorizationResult.Succeeded)
+            {
+                return View(document);
+            }
+            else
+            {
+                return new ForbidResult();
+            }
         }
     }
 }

@@ -44,6 +44,7 @@ namespace AuthorizationLab
 
             services.AddSingleton<IAuthorizationHandler, HasBadgeHandler>();
             services.AddSingleton<IAuthorizationHandler, HasTemporaryPassHandler>();
+            services.AddSingleton<IAuthorizationHandler, DocumentEditHandler>();
 
             services.AddSingleton<IDocumentRepository, DocumentRepository>();
         }
