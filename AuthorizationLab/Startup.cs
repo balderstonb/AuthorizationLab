@@ -44,6 +44,8 @@ namespace AuthorizationLab
 
             services.AddSingleton<IAuthorizationHandler, HasBadgeHandler>();
             services.AddSingleton<IAuthorizationHandler, HasTemporaryPassHandler>();
+
+            services.AddSingleton<IDocumentRepository, DocumentRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
